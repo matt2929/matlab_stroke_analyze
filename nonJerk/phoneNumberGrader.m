@@ -6,7 +6,7 @@ clear all;
 %Number Enter~~~~~~~~~~~~
 
 %elder   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+filename='Name_Door Unlock_12-10-2017_[1h~35m~44s].csv'
 %stroke  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %young   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -14,23 +14,20 @@ clear all;
 %~~~~~~~~~~~~~~~~~~~~~~~~~
 
 M = csvread(filename,2,1);
-M = M(:,1:3)
+M = M(:,1:2)
 Str = readtable(filename);
 Str = Str(:,1);
 TimeStamp = timeStampToActualTime(Str);
 out1 = M;
 
-xAcc = normalize(out1(:,1));
-yAcc = normalize(out1(:,2));
-zAcc = normalize(out1(:,3));
-tAcc = xAcc + yAcc + zAcc
-input = diff(tAcc)
+xAcc = out1(:,1);
+yAcc = out1(:,2);
 shortMe =length(TimeStamp);
 TimeStamp=TimeStamp(1:shortMe);
 delays = diff(TimeStamp)
 fps=1000/mean(delays)
-js = JerkCalc(input)
-area(rot90(input)); 
+js = JerkCalc(xAcc)
+area(xAcc,yAcc); 
 hold off;
 
 function jerk = JerkCalc(in)
@@ -41,10 +38,6 @@ function jerk = JerkCalc(in)
         end
     end
     jerk = count
-end
-
-function normal = normalize(x)
-    normal = x/(max(x))
 end
 
 function output = timeStampToActualTime(in)
