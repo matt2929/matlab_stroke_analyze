@@ -5,9 +5,6 @@ clear all;
 gradesy=[];
 gradeso=[];
 gradess=[];
-speedsy=[];
-speedso=[];
-speedss=[];
 figure;
 for s = 1:3
     myDir = uigetdir; %gets directory
@@ -22,7 +19,7 @@ if s == 2
 name = "nonJerk/PN/old/"+name
 end
 if s == 3
-name = "nonJerk/PN/stroke/"+name
+name = "nonJerk/PN/strokeB/"+name
 end
 a = read_mixed_csv(name,',')
 x=a(:,4)
@@ -36,22 +33,20 @@ TimeStamp=TimeStamp(1:shortMe);
 delays = diff(TimeStamp)
 fps=1000/mean(delays)
 js = JerkCalc(x)
-ts = timeCalc(x,TimeStamp)
 
 area(rot90(input)); 
 hold off;
 if s == 1
 gradesy = [gradesy js]
-speedsy = [speedsy ts]
 end
 if s == 2
     
 gradeso = [gradeso js]
-speedso = [speedso ts]
 end
 if s == 3
-speedss = [speedss ts]
+    
 gradess = [gradess js]
+
 end
 end
 end
@@ -61,42 +56,21 @@ subplot(3,1,2)
 boxplot(gradeso, 'colors', 'b')
 subplot(3,1,3)
 boxplot(gradess, 'colors', 'g')
-
 function jerk = JerkCalc(in)
     false = 0
     true =0
     for i = 1:size(in,1)-1
         strX = char(cell2mat(in(i)))
         strX = strX
-        if (strcmp(strX,'false') == 1)
+        if (strcmp(strX,'false') == 0)
             false = false + 1 
         end
-         if (strcmp(strX,'true') == 1)
+         if (strcmp(strX,'true') == 0)
             true = true + 1 
         end
     end
-    jerk = ((true-false)/(true))*100
-end
-
-function jerk = timeCalc(in,inT)
-    last=0
-    totalSum=0
-    totalCount=0
-    for i = 1:size(in,1)-1
-        strX = char(cell2mat(in(i)))
-        strX = strX
-        if (strcmp(strX,'false') == 1)
-            totalSum = totalSum + inT(i)
-            totalCount = totalCount + 1
-            last = inT(i)
-        end
-         if (strcmp(strX,'true') == 1)
-            totalSum = totalSum + inT(i)
-            totalCount = totalCount + 1
-            last = inT(i)
-        end
-    end
-    jerk = (totalSum/totalCount)
+    jerk = (true/(false+true))*100
+    x=3
 end
 
 function normal = normalize(x)

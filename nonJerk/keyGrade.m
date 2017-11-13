@@ -2,41 +2,73 @@ clc;
 close all;
 clear all;
 
+gradesy=[];
+gradeso=[];
+gradess=[];
+figure;
+for s = 1:3
+    myDir = uigetdir; %gets directory
+myFiles = dir(fullfile(myDir,'*.csv')); %gets all wav files in struct
 
-%Number Enter~~~~~~~~~~~~
-
-%elder   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-filename='KN/Name_Key Unlock_12-10-2017_[1h~55m~42s].csv'
-%stroke  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%young   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%~~~~~~~~~~~~~~~~~~~~~~~~~
-
-M = csvread(filename,2,1);
-M = M(:,1:2)
-Str = readtable(filename);
+for k = 1:length(myFiles)
+name = myFiles(k).name
+if s == 1
+name = "nonJerk/KN/young/"+name
+end
+if s == 2
+name = "nonJerk/KN/old/"+name
+end
+if s == 3
+name = "nonJerk/KN/strokeB/"+name
+end
+M = csvread(name,2,1);
+M = M(:,1:3)
+Str = readtable(name);
 Str = Str(:,1);
 TimeStamp = timeStampToActualTime(Str);
 out1 = M;
 
-xAcc = out1(:,1);
-yAcc = out1(:,2);
+good = normalize(out1(:,4));
+input = diff(tAcc)
 shortMe =length(TimeStamp);
 TimeStamp=TimeStamp(1:shortMe);
 delays = diff(TimeStamp)
 fps=1000/mean(delays)
-js = JerkCalc(xAcc,yAcc)
-plot(xAcc,yAcc); 
+%js = JerkCalc(input)
+area(rot90(input)); 
 hold off;
+if s == 1
+gradesy = [gradesy js]
+end
+if s == 2
+    
+gradeso = [gradeso js]
+end
+if s == 3
+    
+gradess = [gradess js]
+end
+end
 
-function jerk = JerkCalc(inX,inY)
-total =0;
+end
+subplot(3,1,1)
+boxplot(gradesy, 'colors', 'r')
+subplot(3,1,2)
+boxplot(gradeso, 'colors', 'b')
+subplot(3,1,3)
+boxplot(gradess, 'colors', 'g')
+function jerk = JerkCalc(in)
     count = 0 
-    for i = 1:size(inX,1)-1
-        count=count+((inX(i+1)-inX(i)^2 + inY(i+1)-inY(i))^2)^.5
+    for i = 1:size(in,1)-1
+        if (in(i) < 0 &&  in(i+1) >= 0 || in(i+1) < 0 && in(i+1) >= 0)
+            count = count + 1 
+        end
     end
     jerk = count
+end
+
+function normal = normalize(x)
+    normal = x/(max(x))
 end
 
 function output = timeStampToActualTime(in)

@@ -2,28 +2,28 @@ clc;
 close all;
 clear all;
 
+gradesy=[];
+gradeso=[];
+gradess=[];
+figure;
+for s = 1:3
+    myDir = uigetdir; %gets directory
+myFiles = dir(fullfile(myDir,'*.csv')); %gets all wav files in struct
 
-%Verticle Cup~~~~~~~~~~~~
-%elder  %%%%%%%%%%%%%%%%%%%%%%%%%%%
-%filename = 'VPC/7_Verticle Pick up Cup_12-7-2017_[14h~27m~21s]..csv';
-%filename = 'VPC/7_Verticle Pick up Cup_12-7-2017_[14h~25m~27s]..csv';
-%filename = 'VPC/8_Verticle Pick up Cup_12-8-2017_[13h~19m~57s]..csv';
-%filename = 'VPC/8_Verticle Pick up Cup_12-8-2017_[13h~18m~42s]..csv';
-%stroke  %%%%%%%%%%%%%%%%%%%%%%%%%%
-%filename = 'VPC/Name_Verticle Pick up Cup_12-3-2017_[10h~26m~23s]..csv';
-%filename = 'VPC/Name_Verticle Pick up Cup_12-3-2017_[10h~24m~32s]..csv';
-%filename = 'VPC/Name_Verticle Pick up Cup_11-31-2017_[10h~25m~20s]..csv'
-%filename = 'VPC/Name_Verticle Pick up Cup_11-31-2017_[10h~22m~28s]..csv'
-
-%young      s%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%filename = 'VPC/emily walker_Verticle Pick up Cup_12-4-2017_[21h~43m~14s]..csv';
-%filename = 'VPC/Anne_Verticle Pick up Cup_12-4-2017_[21h~57m~46s]..csv';
-%~~~~~~~~~~~~~~~~~~~~~~~~~
-%~~~~~~~~~~~~~~~~~~~~~~~~~
-
-M = csvread(filename,2,1);
+for k = 1:length(myFiles)
+name = myFiles(k).name
+if s == 1
+name = "VPB/young/"+name
+end
+if s == 2
+name = "VPB/old/"+name
+end
+if s == 3
+name = "VPB/stroke/"+name
+end
+M = csvread(name,2,1);
 M = M(:,1:3)
-Str = readtable(filename);
+Str = readtable(name);
 Str = Str(:,1);
 TimeStamp = timeStampToActualTime(Str);
 out1 = (diff(M)).^2;
@@ -44,8 +44,8 @@ end
 
 midlocs = [1];
 for i = 1:size(locs,2)-1
-    diff = locs(i)+((locs(i+1)-locs(i))/2)
-    midlocs=[midlocs [diff]]
+    diffS = locs(i)+((locs(i+1)-locs(i))/2)
+    midlocs=[midlocs [diffS]]
 end
 
 val= (size(tAcc,1)-1)
@@ -71,7 +71,19 @@ area(rot90(tAcc));
 plot(rot90(midlocs),.5,'*','color','g');
 hold off;
 Med = mean(jerks)
-
+if s == 1
+gradesy = [gradesy js]
+end
+if s == 2
+    
+gradeso = [gradeso js]
+end
+if s == 3
+    
+gradess = [gradess js]
+end
+end
+end
 function jerk = JerkCalc(in,DeltaT)
 Amplitude = 40;
 jerk=sum(in* 0.5 * (((DeltaT)^5)/(Amplitude^2.0)));

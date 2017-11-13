@@ -2,50 +2,31 @@ clc;
 close all;
 clear all;
 
+gradesy=[];
+gradeso=[];
+gradess=[];
+figure;
+for s = 1:3
+    myDir = uigetdir; %gets directory
+myFiles = dir(fullfile(myDir,'*.csv')); %gets all wav files in struct
 
-%Verticle Cup~~~~~~~~~~~~
-%elder  %%%%%%%%%%%%%%%%%%%%%%%%%%%
-%filename = 'VPC/7_Verticle Pick up Cup_12-7-2017_[14h~27m~21s]..csv';
-%filename = 'VPC/7_Verticle Pick up Cup_12-7-2017_[14h~25m~27s]..csv';
-%filename = 'VPC/8_Verticle Pick up Cup_12-8-2017_[13h~19m~57s]..csv';
-%filename = 'VPC/8_Verticle Pick up Cup_12-8-2017_[13h~18m~42s]..csv';
-%stroke  %%%%%%%%%%%%%%%%%%%%%%%%%%
-%filename = 'VPC/Name_Verticle Pick up Cup_12-3-2017_[10h~26m~23s]..csv';
-%filename = 'VPC/Name_Verticle Pick up Cup_12-3-2017_[10h~24m~32s]..csv';
-%filename = 'VPC/Name_Verticle Pick up Cup_11-31-2017_[10h~25m~20s]..csv'
-%filename = 'VPC/Name_Verticle Pick up Cup_11-31-2017_[10h~22m~28s]..csv'
-
-%young      s%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%filename = 'VPC/emily walker_Verticle Pick up Cup_12-4-2017_[21h~43m~14s]..csv';
-%filename = 'VPC/Anne_Verticle Pick up Cup_12-4-2017_[21h~57m~46s]..csv';
-%~~~~~~~~~~~~~~~~~~~~~~~~~
-
-%Horizontal Bowl~~~~~~~~~~~~
-%elder  %%%%%%%%%%%%%%%%%%%%%%%%%%%
-filename = 'HPC/8_Horizontal Pick up Cup_12-8-2017_[13h~24m~38s]..csv';
-filename = 'HPC/8_Horizontal Pick up Cup_12-8-2017_[13h~23m~44s]..csv';
-filename = 'HPC/7_Horizontal Pick up Cup_12-7-2017_[14h~30m~57s]..csv';
-filename = 'HPC/7_Horizontal Pick up Cup_12-7-2017_[14h~29m~41s]..csv';
-
-%stroke  %%%%%%%%%%%%%%%%%%%%%%%%%
-filename = 'HPC/Name_Horizontal Pick up Cup_11-31-2017_[10h~28m~16s]..csv';
-filename = 'HPC/Name_Horizontal Pick up Cup_11-31-2017_[10h~26m~41s]..csv';
-filename = 'HPC/Name_Horizontal Pick up Cup_12-3-2017_[10h~29m~22s]..csv';
-filename = 'HPC/Name_Horizontal Pick up Cup_12-3-2017_[10h~28m~32s]..csv';
-
-%young      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-filename = 'HPC/emily walker_Horizontal Pick up Cup_12-4-2017_[21h~45m~49s]..csv';
-filename = 'HPC/Anne_Horizontal Pick up Cup_12-4-2017_[21h~58m~49s]..csv';
-
-%~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-M = csvread(filename,2,1);
+for k = 1:length(myFiles)
+name = myFiles(k).name
+if s == 1
+name = "VPC/young/"+name
+end
+if s == 2
+name = "VPC/old/"+name
+end
+if s == 3
+name = "VPC/stroke/"+name
+end
+M = csvread(name,2,1);
 M = M(:,1:3)
-Str = readtable(filename);
+Str = readtable(name);
 Str = Str(:,1);
 TimeStamp = timeStampToActualTime(Str);
-out1 = M;
+out1 = (M);
 xAcc = out1(:,1);
 yAcc = out1(:,2);
 zAcc = out1(:,3);
@@ -93,7 +74,19 @@ area(rot90(yAcc));
 plot(rot90(midlocs),0,'*','color','g');
 hold off;
 Med = mean(jerks)
-
+if s == 1
+gradesy = [gradesy js]
+end
+if s == 2
+    
+gradeso = [gradeso js]
+end
+if s == 3
+  
+gradess = [gradess js]
+end
+end
+end
 function jerk = JerkCalc(in)
     jerk= size(peaks(in),1)
 end

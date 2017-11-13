@@ -4,14 +4,19 @@ clear all;
 
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~
-filename = 'Name_Pour Water_11-31-2017_[10h~32m~38s]..csv'
-filename = 'Name_Pour Water_11-31-2017_[8h~6m~6s]..csv'
+%filename = 'Name_Pour Water_11-31-2017_[10h~32m~38s]..csv'
+%filename = 'Name_Pour Water_11-31-2017_[8h~6m~6s]..csv'
 %~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-M = csvread(filename,2,1);
+myDir = uigetdir; %gets directory
+myFiles = dir(fullfile(myDir,'*.csv')); %gets all wav files in struct
+grades=[];
+for k = 1:length(myFiles)
+name = myFiles(k).name
+name = "TWI/strokeB/"+name
+M = csvread(name,2,1);
 M = M(:,1:3)
-Str = readtable(filename);
+Str = readtable(name);
 Str = Str(:,1);
 TimeStamp = timeStampToActualTime(Str);
 out1 = M;
@@ -28,7 +33,8 @@ fps=1000/mean(delays)
 js = JerkCalc(input)
 area(rot90(input)); 
 hold off;
-
+grades = [grades js]
+end
 function jerk = JerkCalc(in)
     jerk= size(peaks(in),1)
 end
