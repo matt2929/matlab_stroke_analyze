@@ -19,7 +19,7 @@ if s == 2
 name = "VPC/old/"+name
 end
 if s == 3
-name = "VPC/stroke/"+name
+name = "VPC/strokeB/"+name
 end
 M = csvread(name,2,1);
 M = M(:,1:3)

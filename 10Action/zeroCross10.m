@@ -13,13 +13,13 @@ myFiles = dir(fullfile(myDir,'*.csv'));
 for k = 1:length(myFiles)
 name = myFiles(k).name
 if s == 1
-name = "VPC/young/"+name
+name = "HPC/young/"+name
 end
 if s == 2
-name = "VPC/old/"+name
+name = "HPC/old/"+name
 end
 if s == 3
-name = "VPC/stroke/"+name
+name = "HPC/stroke/"+name
 end
 M = csvread(name,2,1);
 M = M(:,1:3)

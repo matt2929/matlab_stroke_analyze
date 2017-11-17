@@ -13,29 +13,28 @@ myFiles = dir(fullfile(myDir,'*.csv')); %gets all wav files in struct
 for k = 1:length(myFiles)
 name = myFiles(k).name
 if s == 1
-name = "nonJerk/KN/young/"+name
+name = "KN/young/"+name
 end
 if s == 2
-name = "nonJerk/KN/old/"+name
+name = "KN/old/"+name
 end
 if s == 3
-name = "nonJerk/KN/strokeB/"+name
+name = "KN/stroke/"+name
 end
 M = csvread(name,2,1);
-M = M(:,1:3)
+M = M(:,1:2)
 Str = readtable(name);
 Str = Str(:,1);
 TimeStamp = timeStampToActualTime(Str);
 out1 = M;
 
-good = normalize(out1(:,4));
-input = diff(tAcc)
+good = out1(:,2);
 shortMe =length(TimeStamp);
 TimeStamp=TimeStamp(1:shortMe);
 delays = diff(TimeStamp)
 fps=1000/mean(delays)
-%js = JerkCalc(input)
-area(rot90(input)); 
+js = JerkCalc(M)
+
 hold off;
 if s == 1
 gradesy = [gradesy js]
@@ -51,24 +50,17 @@ end
 end
 
 end
-subplot(3,1,1)
-boxplot(gradesy, 'colors', 'r')
-subplot(3,1,2)
-boxplot(gradeso, 'colors', 'b')
-subplot(3,1,3)
-boxplot(gradess, 'colors', 'g')
-function jerk = JerkCalc(in)
-    count = 0 
-    for i = 1:size(in,1)-1
-        if (in(i) < 0 &&  in(i+1) >= 0 || in(i+1) < 0 && in(i+1) >= 0)
-            count = count + 1 
-        end
-    end
-    jerk = count
-end
 
-function normal = normalize(x)
-    normal = x/(max(x))
+function jerk = JerkCalc(in)
+    count = 0
+    x=in(:,1)
+    y=in(:,2)
+    plot(x,y)
+    for i = 1:size(in,1)-1
+            count=count+(x(i)-x(i+1)).^2+((y(i)-y(i+1)).^2).^.5
+      end
+    jerk = (3200000-count)/3200000
+    %jerk= cov(x)+cov(y)
 end
 
 function output = timeStampToActualTime(in)

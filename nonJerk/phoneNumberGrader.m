@@ -16,13 +16,13 @@ myFiles = dir(fullfile(myDir,'*.csv')); %gets all wav files in struct
 for k = 1:length(myFiles)
 name = myFiles(k).name
 if s == 1
-name = "nonJerk/PN/young/"+name
+name = "PN/young/"+name
 end
 if s == 2
-name = "nonJerk/PN/old/"+name
+name = "PN/old/"+name
 end
 if s == 3
-name = "nonJerk/PN/stroke/"+name
+name = "PN/stroke/"+name
 end
 a = read_mixed_csv(name,',')
 x=a(:,4)

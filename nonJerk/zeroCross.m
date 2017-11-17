@@ -10,16 +10,16 @@ for s = 1:3
     myDir = uigetdir; %gets directory
 myFiles = dir(fullfile(myDir,'*.csv')); %gets all wav files in struct
 
-for k = 1:length(myFiles)
+for k = 1:size(myFiles,1)
 name = myFiles(k).name
 if s == 1
-name = "TWI/young/"+name
+name = "pour/young/"+name
 end
 if s == 2
-name = "TWI/old/"+name
+name = "pour/old/"+name
 end
 if s == 3
-name = "TWI/strokeB/"+name
+name = "pour/strokeB/"+name
 end
 M = csvread(name,2,1);
 M = M(:,1:3)

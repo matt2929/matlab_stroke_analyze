@@ -2,18 +2,25 @@ clc;
 close all;
 clear all;
 
-
-%~~~~~~~~~~~~~~~~~~~~~~~~~
-%filename = 'Name_Pour Water_11-31-2017_[10h~32m~38s]..csv'
-%filename = 'Name_Pour Water_11-31-2017_[8h~6m~6s]..csv'
-%~~~~~~~~~~~~~~~~~~~~~~~~~
-
-myDir = uigetdir; %gets directory
+gradesy=[];
+gradeso=[];
+gradess=[];
+figure;
+for s = 1:3
+    myDir = uigetdir; %gets directory
 myFiles = dir(fullfile(myDir,'*.csv')); %gets all wav files in struct
-grades=[];
+
 for k = 1:length(myFiles)
 name = myFiles(k).name
-name = "TWI/strokeB/"+name
+if s == 1
+name = "walk/young/"+name
+end
+if s == 2
+name = "walk/old/"+name
+end
+if s == 3
+name = "walk/stroke/"+name
+end
 M = csvread(name,2,1);
 M = M(:,1:3)
 Str = readtable(name);
@@ -32,15 +39,27 @@ delays = diff(TimeStamp)
 fps=1000/mean(delays)
 js = JerkCalc(input)
 area(rot90(input)); 
-hold off;
-grades = [grades js]
+hold off;if s == 1
+gradesy = [gradesy js]
+end
+if s == 2
+    
+gradeso = [gradeso js]
+end
+if s == 3
+    
+gradess = [gradess js]
+end
+end
+
 end
 function jerk = JerkCalc(in)
-    jerk= size(peaks(in),1)
+    jerk=cov(in)
+    
 end
 
 function normal = normalize(x)
-    normal = x/(max(x))
+    normal= x
 end
 
 function output = timeStampToActualTime(in)
